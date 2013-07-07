@@ -12,21 +12,22 @@ module Jekyll
         end
 
         def convert(content)
-          # Check for use of coderay
-          kramdown_configs = if @config['kramdown']['use_coderay']
-            base_kramdown_configs.merge({
+          Kramdown::Document.new(content, base_kramdown_configs.merge(coderay_configs)).to_html
+        end
+
+        def coderay_configs
+          if @config['kramdown']['use_coderay']
+            {
               :coderay_wrap               => @config['kramdown']['coderay']['coderay_wrap'],
               :coderay_line_numbers       => @config['kramdown']['coderay']['coderay_line_numbers'],
               :coderay_line_number_start  => @config['kramdown']['coderay']['coderay_line_number_start'],
               :coderay_tab_width          => @config['kramdown']['coderay']['coderay_tab_width'],
               :coderay_bold_every         => @config['kramdown']['coderay']['coderay_bold_every'],
               :coderay_css                => @config['kramdown']['coderay']['coderay_css']
-            })
+            }
           else
-            # not using coderay
-            base_kramdown_configs
+            {}
           end
-          Kramdown::Document.new(content, kramdown_configs).to_html
         end
 
         def base_kramdown_configs
